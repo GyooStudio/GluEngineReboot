@@ -1,4 +1,4 @@
-package com.gyoo.gluenginereboot;
+package com.gyoo.gluengine;
 
 import android.content.Context;
 
