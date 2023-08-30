@@ -16,7 +16,7 @@ public class RawModel extends ComponentBase{
     public int[] indices;
 
     public RawModel(int vaoID, int vertCount, float[] positions, float[] uv, float[] norm, int[] indices){
-        super(2);
+        super(COMPONENT_TYPE);
         this.vaoID = vaoID;
         this.vertCount = vertCount;
         isDirty = false;
@@ -27,7 +27,7 @@ public class RawModel extends ComponentBase{
     }
 
     public RawModel(float[] positions, float[] uv, float[] norm, int[] indices){
-        super(2);
+        super(COMPONENT_TYPE);
         this.positions = positions.clone();
         this.uv = uv.clone();
         this.norm = norm.clone();

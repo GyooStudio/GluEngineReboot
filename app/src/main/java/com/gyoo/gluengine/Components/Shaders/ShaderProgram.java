@@ -119,7 +119,7 @@ public abstract class ShaderProgram extends ComponentBase {
             }
         }
 
-        public void loadUniformMatix(int location, Matrix4f matrix){
+        public void loadUniformMatrix(int location, Matrix4f matrix){
             GLES30.glUniformMatrix4fv(location,1,false,matrix.mat,0);
         }
 

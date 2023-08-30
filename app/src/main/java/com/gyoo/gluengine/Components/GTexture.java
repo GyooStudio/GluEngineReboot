@@ -21,14 +21,14 @@ public class GTexture extends ComponentBase{
     public String name = "name";
 
     public GTexture(int ID,boolean transparency){
-        super(3);
+        super(COMPONENT_TYPE);
         this.ID = ID;
         this.hasTransparency = transparency;
         isDirty = false;
     }
 
     public GTexture(Bitmap bmp){
-        super(3);
+        super(COMPONENT_TYPE);
         this.bmp = Bitmap.createBitmap(bmp);
         ID = 0;
         hasTransparency = bmp.hasAlpha();
@@ -36,7 +36,7 @@ public class GTexture extends ComponentBase{
     }
 
     public GTexture(int w,int h,boolean mono,boolean alpha, boolean HDR, boolean depth, boolean Mipmaped) {
-        super(3);
+        super(COMPONENT_TYPE);
         int[] tex = new int[1];
         GLES30.glGenTextures(1, tex, 0);
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, tex[0]);

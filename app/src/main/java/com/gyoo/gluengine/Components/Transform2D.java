@@ -1,25 +1,25 @@
 package com.gyoo.gluengine.Components;
 
 import com.gyoo.gluengine.Vectors.Matrix4f;
+import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
 
-public class Transform extends ComponentBase{
-
-    public static int COMPONENT_TYPE = 1;
+public class Transform2D extends ComponentBase{
+    public static int COMPONENT_TYPE = 5;
 
     private Vector3f position = new Vector3f(0f);
-    private Vector3f rotation = new Vector3f(0f);
-    private Vector3f scale = new Vector3f(1f);
+    private float rotation = 0f;
+    private Vector2f scale = new Vector2f(1f);
 
     public Matrix4f positionM = new Matrix4f();
     public Matrix4f rotationM = new Matrix4f();
     public Matrix4f scaleM = new Matrix4f();
 
-    public Transform(){
+    public Transform2D(){
         super(COMPONENT_TYPE);
         positionM.translate(position);
-        rotationM.rotate(rotation);
-        scaleM.scale(scale);
+        rotationM.rotate(new Vector3f(0f,0f,rotation));
+        scaleM.scale(new Vector3f(scale.x,scale.y,1f));
     }
 
     public Matrix4f getTransformMatrix(){
@@ -41,33 +41,33 @@ public class Transform extends ComponentBase{
         return position;
     }
 
-    public void rotate(Vector3f r){
-        rotation.add(r);
-        rotationM.rotate(r);
+    public void rotate(float r){
+        rotation += r;
+        rotationM.rotate(new Vector3f(0f,0f,r));
     }
 
-    public void setRotation(Vector3f r){
-        rotation = r.copy();
+    public void setRotation(float r){
+        rotation = r;
         rotationM.setIdentity();
-        rotationM.rotate(r);
+        rotationM.rotate(new Vector3f(0f,0f,r));
     }
 
-    public Vector3f getRotation(){
+    public float getRotation(){
         return rotation;
     }
 
-    public void setScale(Vector3f s){
+    public void setScale(Vector2f s){
         scale = s;
         scaleM.setIdentity();
-        scaleM.scale(s);
+        scaleM.scale(new Vector3f(s.x,s.y,1f));
     }
 
-    public void scale(Vector3f s){
+    public void scale(Vector2f s){
         scale.add(s);
-        scaleM.scale(s);
+        scaleM.scale(new Vector3f(s.x,s.y,1f));
     }
 
-    public Vector3f getScale(){
+    public Vector2f getScale(){
         return scale;
     }
 }
