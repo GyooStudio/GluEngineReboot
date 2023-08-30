@@ -1,14 +1,15 @@
-package com.gyoo.gluengine.Shaders;
+package com.gyoo.gluengine.Components.Shaders;
 
 import android.opengl.GLES30;
 import android.util.Log;
 
+import com.gyoo.gluengine.Components.ComponentBase;
 import com.gyoo.gluengine.Vectors.Matrix4f;
 import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
 import com.gyoo.gluengine.Vectors.Vector4f;
 
-public abstract class ShaderProgram {
+public abstract class ShaderProgram extends ComponentBase {
 
         public int programID;
         public int vertexShader;
@@ -19,7 +20,8 @@ public abstract class ShaderProgram {
 
         public boolean isShaderBuilt = false;
 
-        public ShaderProgram(String vertCode, String fragCode){
+        public ShaderProgram(String vertCode, String fragCode , int componentType){
+            super(componentType);
             this.vertCode = vertCode;
             this.fragCode = fragCode;
         }

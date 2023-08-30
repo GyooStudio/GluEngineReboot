@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 
 import androidx.appcompat.app.AppCompatActivity;
 

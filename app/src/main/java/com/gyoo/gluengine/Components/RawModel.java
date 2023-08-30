@@ -1,8 +1,10 @@
-package com.gyoo.gluengine.Objects;
+package com.gyoo.gluengine.Components;
 
 import com.gyoo.gluengine.utils.Loader;
 
-public class RawModel {
+public class RawModel extends ComponentBase{
+
+    public static int COMPONENT_TYPE = 2;
     public int vaoID;
     public int vertCount;
     public String name = "name";
@@ -14,6 +16,7 @@ public class RawModel {
     public int[] indices;
 
     public RawModel(int vaoID, int vertCount, float[] positions, float[] uv, float[] norm, int[] indices){
+        super(2);
         this.vaoID = vaoID;
         this.vertCount = vertCount;
         isDirty = false;
@@ -24,6 +27,7 @@ public class RawModel {
     }
 
     public RawModel(float[] positions, float[] uv, float[] norm, int[] indices){
+        super(2);
         this.positions = positions.clone();
         this.uv = uv.clone();
         this.norm = norm.clone();

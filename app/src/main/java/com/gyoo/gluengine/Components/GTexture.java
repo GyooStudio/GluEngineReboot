@@ -1,4 +1,4 @@
-package com.gyoo.gluengine.Objects;
+package com.gyoo.gluengine.Components;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES30;
@@ -9,7 +9,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class GTexture {
+public class GTexture extends ComponentBase{
+
+    public static int COMPONENT_TYPE = 3;
     public int ID;
     public boolean hasTransparency;
     public Bitmap bmp;
@@ -19,12 +21,14 @@ public class GTexture {
     public String name = "name";
 
     public GTexture(int ID,boolean transparency){
+        super(3);
         this.ID = ID;
         this.hasTransparency = transparency;
         isDirty = false;
     }
 
     public GTexture(Bitmap bmp){
+        super(3);
         this.bmp = Bitmap.createBitmap(bmp);
         ID = 0;
         hasTransparency = bmp.hasAlpha();
@@ -32,6 +36,7 @@ public class GTexture {
     }
 
     public GTexture(int w,int h,boolean mono,boolean alpha, boolean HDR, boolean depth, boolean Mipmaped) {
+        super(3);
         int[] tex = new int[1];
         GLES30.glGenTextures(1, tex, 0);
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, tex[0]);

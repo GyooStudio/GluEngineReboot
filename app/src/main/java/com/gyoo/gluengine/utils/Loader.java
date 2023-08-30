@@ -3,21 +3,14 @@ package com.gyoo.gluengine.utils;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.opengl.GLES30;
-import android.util.JsonReader;
 import android.util.Log;
 
 import com.gyoo.gluengine.MainActivity;
-import com.gyoo.gluengine.Objects.RawModel;
-import com.gyoo.gluengine.Objects.GTexture;
+import com.gyoo.gluengine.Components.RawModel;
+import com.gyoo.gluengine.Components.GTexture;
 import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
-import com.gyoo.gluengine.Vectors.Vector4f;
-import com.gyoo.gluengine.Vectors.Matrix4f;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
