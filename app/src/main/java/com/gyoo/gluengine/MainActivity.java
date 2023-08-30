@@ -8,6 +8,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gyoo.gluengine.utils.Loader;
+
 public class MainActivity extends AppCompatActivity {
 
     private GluSurfaceView gluSurfaceView;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         gluSurfaceView = new GluSurfaceView(this);
+
+        Loader.init(this);
 
         setContentView(gluSurfaceView);
 
