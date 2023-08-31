@@ -15,10 +15,12 @@ import com.gyoo.gluengine.Objects.GameObject;
 import com.gyoo.gluengine.Vectors.Matrix4f;
 import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
+import com.gyoo.gluengine.Vectors.Vector4f;
 import com.gyoo.gluengine.utils.Loader;
 import com.gyoo.gluengine.utils.Maths;
 
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 public class Renderer implements GLSurfaceView.Renderer {
@@ -62,7 +64,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         r = Loader.loadToVAO(positions);
         quadTrans = new Transform2D();
-        quadTrans.setPosition(new Vector3f(0,0,0f) );
+        quadTrans.setPosition(new Vector3f(0,0,-0.5f) );
         quadTrans.setScale(new Vector2f(10f));
         GUIShader gs = new GUIShader(loader.loadAssetText("Shaders/GUI.vert"),loader.loadAssetText("Shaders/GUI.frag"));
         gs.buildShader();
@@ -70,6 +72,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         quad.addComponent(r);
         quad.addComponent(quadTrans);
         quad.addComponent(gs);
+        quad.isTransparent = true;
 
         scene.addObject(ball);
         scene.addObject(quad);
@@ -81,15 +84,17 @@ public class Renderer implements GLSurfaceView.Renderer {
 
             r = Loader.loadToVAO(positions);
             Transform2D t2d = new Transform2D();
-            t2d.setPosition( new Vector3f(1f,0f,0f));
+            t2d.setPosition( new Vector3f(1f,0f,-0.01f));
             t2d.setScale(new Vector2f(1.1f));
             gs = new GUIShader(loader.loadAssetText("Shaders/GUI.vert"),loader.loadAssetText("Shaders/GUI.frag"));
             gs.buildShader();
+            gs.color = new Vector4f(1f,1f,1f,0.1f);
 
             child.addComponent(r);
             child.addComponent(t2d);
             child.addComponent(gs);
             child.parent(parent);
+            child.isTransparent = true;
 
             parent = child;
 
@@ -103,6 +108,8 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         GLES30.glEnable(GLES30.GL_CULL_FACE);
         GLES30.glCullFace(GLES30.GL_BACK);
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE_MINUS_SRC_ALPHA);
+        GLES30.glEnable(GLES30.GL_BLEND);
         Log.w("Renderer","Renderer created");
     }
 
@@ -144,6 +151,11 @@ public class Renderer implements GLSurfaceView.Renderer {
             Transform2D transform2D = object.getComponent(Transform2D.COMPONENT_TYPE);
             HelloTriangleShader htShader = object.getComponent(HelloTriangleShader.COMPONENT_TYPE);
             GUIShader guiShader = object.getComponent(GUIShader.COMPONENT_TYPE);
+            /*if(object.isTransparent){
+                GLES30.glEnable(GLES30.GL_BLEND);
+            }else{
+                GLES30.glDisable(GLES30.GL_BLEND);
+            }*/
 
             if(mesh != null){
                 if ( htShader != null){
@@ -186,7 +198,9 @@ public class Renderer implements GLSurfaceView.Renderer {
                     } else {
                         guiShader.loadTransform( Matrix4f.MultiplyMM( projection,transform.getTransformMatrix() ) );
                     }
+
                     guiShader.loadScreenDim(ressources.screenDimPixels);
+                    guiShader.loadColor(guiShader.color);
 
                     if(mesh.indices != null){
                         GLES30.glDrawElements(GLES30.GL_TRIANGLES,mesh.vertCount,GLES30.GL_UNSIGNED_INT,0);

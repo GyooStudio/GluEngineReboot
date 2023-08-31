@@ -12,6 +12,7 @@ public class GameObject {
 
     public GameObject parent = null;
     //public ArrayList<GameObject> childs = new ArrayList<>();
+    public boolean isTransparent = false;
 
     public GameObject(){}
 
