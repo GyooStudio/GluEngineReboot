@@ -1,5 +1,6 @@
 package com.gyoo.gluengine.Components;
 
+import com.gyoo.gluengine.Objects.GameObject;
 import com.gyoo.gluengine.Vectors.Matrix4f;
 import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
@@ -14,6 +15,7 @@ public class Transform2D extends ComponentBase{
     public Matrix4f positionM = new Matrix4f();
     public Matrix4f rotationM = new Matrix4f();
     public Matrix4f scaleM = new Matrix4f();
+    public Transform2D parent = null;
 
     public Transform2D(){
         super(COMPONENT_TYPE);
@@ -23,7 +25,11 @@ public class Transform2D extends ComponentBase{
     }
 
     public Matrix4f getTransformMatrix(){
-        return Matrix4f.MultiplyMM(positionM,Matrix4f.MultiplyMM(scaleM,rotationM));
+        if(parent == null) {
+            return Matrix4f.MultiplyMM(positionM, Matrix4f.MultiplyMM(rotationM, scaleM));
+        }else {
+            return Matrix4f.MultiplyMM( parent.getTransformMatrix(), Matrix4f.MultiplyMM(positionM, Matrix4f.MultiplyMM(rotationM, scaleM)) );
+        }
     }
 
     public void setPosition(Vector3f p){
@@ -69,5 +75,13 @@ public class Transform2D extends ComponentBase{
 
     public Vector2f getScale(){
         return scale;
+    }
+
+    public void parent(GameObject p){
+        parent = p.getComponent(Transform2D.COMPONENT_TYPE);
+    }
+
+    public  void unParent(){
+        parent = null;
     }
 }
