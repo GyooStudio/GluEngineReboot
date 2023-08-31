@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.gyoo.gluengine.Components.GTexture;
 import com.gyoo.gluengine.Components.RawModel;
 import com.gyoo.gluengine.Components.Shaders.GUIShader;
 import com.gyoo.gluengine.Components.Shaders.HelloTriangleShader;
@@ -52,6 +53,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         t.setPosition( new Vector3f(0,0,-3) );
 
+        GTexture texture = loader.loadAssetTexture("Textures/fusé.png");
+        texture.makeTexture();
+
         float[] positions = {
                 -0.5f,-0.5f,0f,
                 0.5f,-0.5f,0f,
@@ -72,6 +76,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         quad.addComponent(r);
         quad.addComponent(quadTrans);
         quad.addComponent(gs);
+        quad.addComponent(texture);
         quad.isTransparent = true;
 
         scene.addObject(ball);
@@ -88,11 +93,12 @@ public class Renderer implements GLSurfaceView.Renderer {
             t2d.setScale(new Vector2f(1.1f));
             gs = new GUIShader(loader.loadAssetText("Shaders/GUI.vert"),loader.loadAssetText("Shaders/GUI.frag"));
             gs.buildShader();
-            gs.color = new Vector4f(1f,1f,1f,0.1f);
+            gs.color = new Vector4f(1f,1f,1f,0.5f);
 
             child.addComponent(r);
             child.addComponent(t2d);
             child.addComponent(gs);
+            //child.addComponent(texture);
             child.parent(parent);
             child.isTransparent = true;
 
@@ -151,6 +157,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             Transform2D transform2D = object.getComponent(Transform2D.COMPONENT_TYPE);
             HelloTriangleShader htShader = object.getComponent(HelloTriangleShader.COMPONENT_TYPE);
             GUIShader guiShader = object.getComponent(GUIShader.COMPONENT_TYPE);
+            GTexture texture = object.getComponent(GTexture.COMPONENT_TYPE);
             /*if(object.isTransparent){
                 GLES30.glEnable(GLES30.GL_BLEND);
             }else{
@@ -197,6 +204,14 @@ public class Renderer implements GLSurfaceView.Renderer {
                         guiShader.loadTransform( transform2D.getTransformMatrix() );
                     } else {
                         guiShader.loadTransform( Matrix4f.MultiplyMM( projection,transform.getTransformMatrix() ) );
+                    }
+
+                    if(texture != null){
+                        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+                        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D,texture.ID);
+                        guiShader.isTextured(true);
+                    }else{
+                        guiShader.isTextured(false);
                     }
 
                     guiShader.loadScreenDim(ressources.screenDimPixels);
