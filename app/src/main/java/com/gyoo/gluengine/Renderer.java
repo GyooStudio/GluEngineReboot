@@ -8,20 +8,15 @@ import android.util.Log;
 import com.gyoo.gluengine.Components.GTexture;
 import com.gyoo.gluengine.Components.RawModel;
 import com.gyoo.gluengine.Components.Shaders.GUIShader;
-import com.gyoo.gluengine.Components.Shaders.HelloTriangleShader;
-import com.gyoo.gluengine.Components.Shaders.ShaderProgram;
-import com.gyoo.gluengine.Components.Transform;
 import com.gyoo.gluengine.Components.Transform2D;
-import com.gyoo.gluengine.Objects.GameObject;
+import com.gyoo.gluengine.Objects.GUI.GUIQuad;
 import com.gyoo.gluengine.Vectors.Matrix4f;
 import com.gyoo.gluengine.Vectors.Vector2f;
 import com.gyoo.gluengine.Vectors.Vector3f;
 import com.gyoo.gluengine.Vectors.Vector4f;
 import com.gyoo.gluengine.utils.Loader;
-import com.gyoo.gluengine.utils.Maths;
 
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 public class Renderer implements GLSurfaceView.Renderer {
@@ -31,81 +26,26 @@ public class Renderer implements GLSurfaceView.Renderer {
     long FPStimer;
     int FPSCounter;
     float FPS;
-    GameObject ball = new GameObject();
-    GameObject quad = new GameObject();
+    GUIQuad quad;
     Transform2D quadTrans = new Transform2D();
-    GameObject child = new GameObject();
-    GameObject child2 = new GameObject();
     Scene scene = new Scene();
     Matrix4f projection;
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         loader = Loader.getLoader();
         ressources = Ressources.getRessources();
-        Transform t = new Transform();
-        RawModel r = loader.loadAssetModel("Objects/ico.obj");
-        r.makeModel();
-        HelloTriangleShader hts = new HelloTriangleShader(loader.loadAssetText("Shaders/HelloTriangle.vert"),loader.loadAssetText("Shaders/HelloTriangle.frag"));
-        hts.buildShader();
-        ball.addComponent(t);
-        ball.addComponent(r);
-        ball.addComponent(hts);
-
-        t.setPosition( new Vector3f(0,0,-3) );
 
         GTexture texture = loader.loadAssetTexture("Textures/fusé.png");
         texture.makeTexture();
 
-        float[] positions = {
-                -0.5f,-0.5f,0f,
-                0.5f,-0.5f,0f,
-                -0.5f,0.5f,0f,
+        quad = new GUIQuad();
 
-                -0.5f,0.5f,0f,
-                0.5f,-0.5f,0f,
-                0.5f,0.5f,0f
-        };
-
-        r = Loader.loadToVAO(positions);
-        quadTrans = new Transform2D();
+        quadTrans = quad.transform2D;
         quadTrans.setPosition(new Vector3f(0,0,-0.5f) );
-        quadTrans.setScale(new Vector2f(10f));
-        GUIShader gs = new GUIShader(loader.loadAssetText("Shaders/GUI.vert"),loader.loadAssetText("Shaders/GUI.frag"));
-        gs.buildShader();
+        quadTrans.setScale(new Vector2f(600f));
+        quad.addTexture(texture);
 
-        quad.addComponent(r);
-        quad.addComponent(quadTrans);
-        quad.addComponent(gs);
-        quad.addComponent(texture);
-        quad.isTransparent = true;
-
-        scene.addObject(ball);
-        scene.addObject(quad);
-
-        GameObject parent = quad;
-        GameObject child;
-        for (int i = 0; i < 50; i++) {
-            child = new GameObject();
-
-            r = Loader.loadToVAO(positions);
-            Transform2D t2d = new Transform2D();
-            t2d.setPosition( new Vector3f(1f,0f,-0.01f));
-            t2d.setScale(new Vector2f(1.1f));
-            gs = new GUIShader(loader.loadAssetText("Shaders/GUI.vert"),loader.loadAssetText("Shaders/GUI.frag"));
-            gs.buildShader();
-            gs.color = new Vector4f(1f,1f,1f,0.5f);
-
-            child.addComponent(r);
-            child.addComponent(t2d);
-            child.addComponent(gs);
-            //child.addComponent(texture);
-            child.parent(parent);
-            child.isTransparent = true;
-
-            parent = child;
-
-            scene.addObject(child);
-        }
+        scene.addGUIQuad(quad);
 
         projection = new Matrix4f();
         Matrix.perspectiveM(projection.mat,0,70f,1f,0.001f,100f);
@@ -131,13 +71,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl10) {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
 
-        for (GameObject g : scene.gameObjects) {
-            Transform2D t2d = g.getComponent(Transform2D.COMPONENT_TYPE);
-            if(t2d != null){
-                t2d.rotate(2f);
-            }
-        }
-
         render(scene);
 
         FPS += 1f/( (float)( System.currentTimeMillis() - FPStimer) / 1000f );
@@ -151,85 +84,31 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private void render(Scene scene){
-        for (GameObject object: scene.gameObjects) {
-            RawModel mesh = object.getComponent(RawModel.COMPONENT_TYPE);
-            Transform transform = object.getComponent(Transform.COMPONENT_TYPE);
-            Transform2D transform2D = object.getComponent(Transform2D.COMPONENT_TYPE);
-            HelloTriangleShader htShader = object.getComponent(HelloTriangleShader.COMPONENT_TYPE);
-            GUIShader guiShader = object.getComponent(GUIShader.COMPONENT_TYPE);
-            GTexture texture = object.getComponent(GTexture.COMPONENT_TYPE);
-            /*if(object.isTransparent){
-                GLES30.glEnable(GLES30.GL_BLEND);
+        for (GUIQuad quad : scene.guiQuads) {
+            quad.shader.start();
+
+            GLES30.glBindVertexArray(quad.mesh.vaoID);
+            GLES30.glEnableVertexAttribArray(0);
+
+            if(quad.texture != null){
+                GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+                GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, quad.texture.ID);
+                quad.shader.isTextured(true);
             }else{
-                GLES30.glDisable(GLES30.GL_BLEND);
-            }*/
-
-            if(mesh != null){
-                if ( htShader != null){
-
-                    htShader.start();
-
-                    GLES30.glBindVertexArray(mesh.vaoID);
-                    GLES30.glEnableVertexAttribArray(0);
-
-                    if(transform == null && transform2D == null){
-                        htShader.loadTransformMat(new Matrix4f());
-                    } else if(transform2D != null && transform == null){
-                        htShader.loadTransformMat( transform2D.getTransformMatrix() );
-                    } else {
-                        htShader.loadTransformMat( Matrix4f.MultiplyMM( projection,transform.getTransformMatrix() ) );
-                    }
-
-                    if(mesh.indices != null){
-                        GLES30.glDrawElements(GLES30.GL_TRIANGLES,mesh.vertCount,GLES30.GL_UNSIGNED_INT,0);
-                    }else{
-                        GLES30.glDrawArrays(GLES30.GL_TRIANGLES,0,mesh.vertCount);
-                    }
-
-                    GLES30.glDisableVertexAttribArray(0);
-                    GLES30.glBindVertexArray(0);
-
-                    htShader.stop();
-
-                } else if(guiShader != null){
-
-                    guiShader.start();
-
-                    GLES30.glBindVertexArray(mesh.vaoID);
-                    GLES30.glEnableVertexAttribArray(0);
-
-                    if(transform == null && transform2D == null){
-                        guiShader.loadTransform(new Matrix4f());
-                    } else if(transform2D != null && transform == null){
-                        guiShader.loadTransform( transform2D.getTransformMatrix() );
-                    } else {
-                        guiShader.loadTransform( Matrix4f.MultiplyMM( projection,transform.getTransformMatrix() ) );
-                    }
-
-                    if(texture != null){
-                        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-                        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D,texture.ID);
-                        guiShader.isTextured(true);
-                    }else{
-                        guiShader.isTextured(false);
-                    }
-
-                    guiShader.loadScreenDim(ressources.screenDimPixels);
-                    guiShader.loadColor(guiShader.color);
-
-                    if(mesh.indices != null){
-                        GLES30.glDrawElements(GLES30.GL_TRIANGLES,mesh.vertCount,GLES30.GL_UNSIGNED_INT,0);
-                    }else{
-                        GLES30.glDrawArrays(GLES30.GL_TRIANGLES,0,mesh.vertCount);
-                    }
-
-                    GLES30.glDisableVertexAttribArray(0);
-                    GLES30.glBindVertexArray(0);
-
-                    guiShader.stop();
-
-                }
+                quad.shader.isTextured(false);
             }
+
+            quad.shader.loadScreenDim(ressources.screenDimPixels);
+
+            quad.shader.loadColor(quad.shader.color);
+            quad.shader.loadTransform(quad.transform2D.getTransformMatrix());
+
+            GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP,0,quad.mesh.vertCount);
+
+            GLES30.glDisableVertexAttribArray(0);
+            GLES30.glBindVertexArray(0);
+
+            quad.shader.stop();
         }
     }
 }

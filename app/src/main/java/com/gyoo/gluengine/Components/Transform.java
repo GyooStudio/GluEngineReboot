@@ -1,12 +1,9 @@
 package com.gyoo.gluengine.Components;
 
-import com.gyoo.gluengine.Objects.GameObject;
 import com.gyoo.gluengine.Vectors.Matrix4f;
 import com.gyoo.gluengine.Vectors.Vector3f;
 
-public class Transform extends ComponentBase{
-
-    public static int COMPONENT_TYPE = 1;
+public class Transform{
 
     private Vector3f position = new Vector3f(0f);
     private Vector3f rotation = new Vector3f(0f);
@@ -19,7 +16,6 @@ public class Transform extends ComponentBase{
     public Transform parent = null;
 
     public Transform(){
-        super(COMPONENT_TYPE);
         positionM.translate(position);
         rotationM.rotate(rotation);
         scaleM.scale(scale);
@@ -78,8 +74,8 @@ public class Transform extends ComponentBase{
         return scale;
     }
 
-    public void parent(GameObject p){
-        parent = p.getComponent(Transform.COMPONENT_TYPE);
+    public void parent(Transform p){
+        parent = p;
     }
 
     public void unParent(){

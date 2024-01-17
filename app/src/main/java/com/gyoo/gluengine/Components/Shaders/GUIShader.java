@@ -16,7 +16,7 @@ public class GUIShader extends ShaderProgram{
     public Vector4f color = new Vector4f(1f);
 
     public GUIShader(String vertCode, String fragCode) {
-        super(vertCode, fragCode, COMPONENT_TYPE);
+        super(vertCode, fragCode);
     }
 
     @Override

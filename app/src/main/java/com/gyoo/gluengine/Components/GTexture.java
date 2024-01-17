@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class GTexture extends ComponentBase{
+public class GTexture{
 
     public static int COMPONENT_TYPE = 3;
     public int ID;
@@ -21,14 +21,12 @@ public class GTexture extends ComponentBase{
     public String name = "name";
 
     public GTexture(int ID,boolean transparency){
-        super(COMPONENT_TYPE);
         this.ID = ID;
         this.hasTransparency = transparency;
         isDirty = false;
     }
 
     public GTexture(Bitmap bmp){
-        super(COMPONENT_TYPE);
         this.bmp = Bitmap.createBitmap(bmp);
         ID = 0;
         hasTransparency = bmp.hasAlpha();
@@ -36,7 +34,6 @@ public class GTexture extends ComponentBase{
     }
 
     public GTexture(int w,int h,boolean mono,boolean alpha, boolean HDR, boolean depth, boolean Mipmaped) {
-        super(COMPONENT_TYPE);
         int[] tex = new int[1];
         GLES30.glGenTextures(1, tex, 0);
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, tex[0]);
@@ -44,7 +41,6 @@ public class GTexture extends ComponentBase{
         if (Mipmaped) {
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-            //GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,GLES30.GL_TEXTURE_MAX_LEVEL, 1000);
         }else{
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
