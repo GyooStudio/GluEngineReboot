@@ -13,7 +13,7 @@ public class GluSurfaceView extends GLSurfaceView {
 
         renderer = new com.gyoo.gluengine.Renderer();
         setRenderer(renderer);
-        Log.w("GluSurfaceView", "SurfaceView created");
+        Log.w("GluSurfaceView", "SurfaceView créé");
     }
 
 }

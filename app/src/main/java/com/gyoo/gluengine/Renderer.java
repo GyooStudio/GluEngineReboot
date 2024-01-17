@@ -6,48 +6,47 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.gyoo.gluengine.Components.GTexture;
-import com.gyoo.gluengine.Components.RawModel;
-import com.gyoo.gluengine.Components.Shaders.GUIShader;
-import com.gyoo.gluengine.Components.Transform2D;
-import com.gyoo.gluengine.Objects.GUI.GUIQuad;
-import com.gyoo.gluengine.Vectors.Matrix4f;
-import com.gyoo.gluengine.Vectors.Vector2f;
-import com.gyoo.gluengine.Vectors.Vector3f;
-import com.gyoo.gluengine.Vectors.Vector4f;
-import com.gyoo.gluengine.utils.Loader;
+import com.gyoo.gluengine.Components.Transformée2D;
+import com.gyoo.gluengine.Objets.IUG.IUGQuad;
+import com.gyoo.gluengine.Objets.Scène.GluObjet;
+import com.gyoo.gluengine.Vecteurs.Matrice4f;
+import com.gyoo.gluengine.Vecteurs.Vecteur2f;
+import com.gyoo.gluengine.Vecteurs.Vecteur3f;
+import com.gyoo.gluengine.utils.Chargeur;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+
 public class Renderer implements GLSurfaceView.Renderer {
 
-    Loader loader;
+    Chargeur chargeur;
     Ressources ressources;
-    long FPStimer;
-    int FPSCounter;
+    long chronoFPS;
+    int compteurFPS;
     float FPS;
-    GUIQuad quad;
-    Transform2D quadTrans = new Transform2D();
-    Scene scene = new Scene();
-    Matrix4f projection;
+    IUGQuad quad;
+    Transformée2D quadTrans = new Transformée2D();
+    Scène scène = new Scène();
+    Matrice4f projection;
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        loader = Loader.getLoader();
-        ressources = Ressources.getRessources();
+        chargeur = Chargeur.avoirChargeur();
+        ressources = Ressources.avoirRessoucres();
 
-        GTexture texture = loader.loadAssetTexture("Textures/fusé.png");
+        GTexture texture = chargeur.chargerTextureActif("Textures/fusé.png");
         texture.makeTexture();
 
-        quad = new GUIQuad();
+        quad = new IUGQuad();
 
-        quadTrans = quad.transform2D;
-        quadTrans.setPosition(new Vector3f(0,0,-0.5f) );
-        quadTrans.setScale(new Vector2f(600f));
-        quad.addTexture(texture);
+        quadTrans = quad.transformée2D;
+        quadTrans.setPosition(new Vecteur3f(600f,0,-0.5f) );
+        quadTrans.setScalePt(new Vecteur2f(1f));
+        //quad.addTexture(texture);
 
-        scene.addGUIQuad(quad);
+        scène.ajouterGUIQuad(quad);
 
-        projection = new Matrix4f();
+        projection = new Matrice4f();
         Matrix.perspectiveM(projection.mat,0,70f,1f,0.001f,100f);
 
         GLES30.glClearColor(0.8f,0.5f,0.2f,1f);
@@ -56,36 +55,40 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES30.glCullFace(GLES30.GL_BACK);
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE_MINUS_SRC_ALPHA);
         GLES30.glEnable(GLES30.GL_BLEND);
-        Log.w("Renderer","Renderer created");
+        Log.w("Renderer","Renderer créé");
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int width, int height) {
-        GLES30.glViewport(0,0, width, height);
-        ressources.screenDimPixels = new Vector2f( (float) width, (float) height );
-        Matrix.perspectiveM(projection.mat,0,70f,(float)width/(float)height,0.001f,100f);
-        Log.w("onSurfaceChanged","width : " + width + "height : " + height);
+    public void onSurfaceChanged(GL10 gl10, int largeur, int hauteur) {
+        GLES30.glViewport(0,0, largeur, hauteur);
+        ressources.dimÉcranPixels = new Vecteur2f( (float) largeur, (float) hauteur );
+        Matrix.perspectiveM(projection.mat,0,70f,(float)largeur/(float)hauteur,0.001f,100f);
+        Log.w("onSurfaceChanged","largeur : " + largeur + "hauteur : " + hauteur);
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
 
-        render(scene);
+        peindre(scène);
 
-        FPS += 1f/( (float)( System.currentTimeMillis() - FPStimer) / 1000f );
-        FPStimer = System.currentTimeMillis();
-        FPSCounter++;
-        if(FPSCounter >= 120) {
-            Log.w("FPS", FPS/(float)FPSCounter + "");
-            FPSCounter = 0;
+        FPS += 1f/( (float)( System.currentTimeMillis() - chronoFPS) / 1000f );
+        chronoFPS = System.currentTimeMillis();
+        compteurFPS++;
+        if(compteurFPS >= 120) {
+            Log.w("FPS", FPS/(float) compteurFPS + "");
+            compteurFPS = 0;
             FPS = 0f;
         }
     }
 
-    private void render(Scene scene){
-        for (GUIQuad quad : scene.guiQuads) {
-            quad.shader.start();
+    private void peindre(Scène scène){
+        for (GluObjet object : scène.gluObjets){
+            object.shader.commencer();
+        }
+
+        for (IUGQuad quad : scène.IUGQuads) {
+            quad.shader.commencer();
 
             GLES30.glBindVertexArray(quad.mesh.vaoID);
             GLES30.glEnableVertexAttribArray(0);
@@ -93,22 +96,22 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(quad.texture != null){
                 GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
                 GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, quad.texture.ID);
-                quad.shader.isTextured(true);
+                quad.shader.aTexture(true);
             }else{
-                quad.shader.isTextured(false);
+                quad.shader.aTexture(false);
             }
 
-            quad.shader.loadScreenDim(ressources.screenDimPixels);
+            quad.shader.chargerDimÉcran(ressources.dimÉcranPixels);
 
-            quad.shader.loadColor(quad.shader.color);
-            quad.shader.loadTransform(quad.transform2D.getTransformMatrix());
+            quad.shader.chargerCouleur(quad.shader.color);
+            quad.shader.chargerTransformée(quad.transformée2D.getTransformMatrix());
 
             GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP,0,quad.mesh.vertCount);
 
             GLES30.glDisableVertexAttribArray(0);
             GLES30.glBindVertexArray(0);
 
-            quad.shader.stop();
+            quad.shader.terminer();
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.gyoo.gluengine.Components;
 
-import com.gyoo.gluengine.utils.Loader;
+import com.gyoo.gluengine.utils.Chargeur;
 
-public class RawModel{
+public class ModèleBrut {
     public int vaoID;
     public int vertCount;
     public String name = "name";
@@ -13,7 +13,7 @@ public class RawModel{
     public float[] norm;
     public int[] indices;
 
-    public RawModel(int vaoID, int vertCount, float[] positions, float[] uv, float[] norm, int[] indices){
+    public ModèleBrut(int vaoID, int vertCount, float[] positions, float[] uv, float[] norm, int[] indices){
         this.vaoID = vaoID;
         this.vertCount = vertCount;
         isDirty = false;
@@ -23,7 +23,7 @@ public class RawModel{
         this.indices = indices;
     }
 
-    public RawModel(float[] positions, float[] uv, float[] norm, int[] indices){
+    public ModèleBrut(float[] positions, float[] uv, float[] norm, int[] indices){
         this.positions = positions.clone();
         this.uv = uv.clone();
         this.norm = norm.clone();
@@ -34,7 +34,7 @@ public class RawModel{
     }
 
     public void makeModel(){
-        RawModel model = Loader.loadToVAO(positions,uv,norm,indices);
+        ModèleBrut model = Chargeur.ChargerVersVAO(positions,uv,norm,indices);
         vaoID = model.vaoID;
         isDirty = false;
         //this.positions = null;

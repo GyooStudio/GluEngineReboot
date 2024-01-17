@@ -6,11 +6,11 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
 import android.util.Log;
 
+import com.gyoo.gluengine.Components.ModèleBrut;
 import com.gyoo.gluengine.MainActivity;
-import com.gyoo.gluengine.Components.RawModel;
 import com.gyoo.gluengine.Components.GTexture;
-import com.gyoo.gluengine.Vectors.Vector2f;
-import com.gyoo.gluengine.Vectors.Vector3f;
+import com.gyoo.gluengine.Vecteurs.Vecteur2f;
+import com.gyoo.gluengine.Vecteurs.Vecteur3f;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -25,28 +25,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Loader {
+public class Chargeur {
 
 	private final MainActivity main;
 
-	private static Loader loader;
+	private static Chargeur chargeur;
 
 	//private Ressources ressources;
 
-	private Loader(MainActivity main){
+	private Chargeur(MainActivity main){
 		this.main = main;
 	}
 
-	public static void init(MainActivity main){
-		loader = new Loader(main);
-		//loader.ressources = Ressources.getRessources();
+	public static void initier(MainActivity main){
+		chargeur = new Chargeur(main);
+		//chargeur.ressources = Ressources.getRessources();
 	}
 
-	public static Loader getLoader(){
-		return loader;
+	public static Chargeur avoirChargeur(){
+		return chargeur;
 	}
 
-	public static RawModel loadToVAO(float[] positions, float[] uv, float[] norm, int[] indices){
+	public static ModèleBrut ChargerVersVAO(float[] positions, float[] uv, float[] norm, int[] Indexes){
 		long timer = System.currentTimeMillis();
 
 		//tangent bitangent
@@ -55,95 +55,95 @@ public class Loader {
 
 		if(uv.length > 0) {
 
-			Vector3f P1,P2,P3,E1,E2,TAN,BITAN;
-			Vector2f PUV1,PUV2,PUV3,dUV1,dUV2;
+			Vecteur3f P1,P2,P3,E1,E2,TAN,BITAN;
+			Vecteur2f PUV1,PUV2,PUV3,dUV1,dUV2;
 			float a;
 
-			for (int i = 0; i < indices.length - 2; i += 3) {
-				P1 = new Vector3f(positions[indices[i + 0] * 3 + 0], positions[indices[i + 0] * 3 + 1], positions[indices[i + 0] * 3 + 2]);
-				P2 = new Vector3f(positions[indices[i + 1] * 3 + 0], positions[indices[i + 1] * 3 + 1], positions[indices[i + 1] * 3 + 2]);
-				P3 = new Vector3f(positions[indices[i + 2] * 3 + 0], positions[indices[i + 2] * 3 + 1], positions[indices[i + 2] * 3 + 2]);
+			for (int i = 0; i < Indexes.length - 2; i += 3) {
+				P1 = new Vecteur3f(positions[Indexes[i + 0] * 3 + 0], positions[Indexes[i + 0] * 3 + 1], positions[Indexes[i + 0] * 3 + 2]);
+				P2 = new Vecteur3f(positions[Indexes[i + 1] * 3 + 0], positions[Indexes[i + 1] * 3 + 1], positions[Indexes[i + 1] * 3 + 2]);
+				P3 = new Vecteur3f(positions[Indexes[i + 2] * 3 + 0], positions[Indexes[i + 2] * 3 + 1], positions[Indexes[i + 2] * 3 + 2]);
 
-				E1 = Vector3f.sub(P2, P1);
-				E2 = Vector3f.sub(P3, P1);
+				E1 = Vecteur3f.sous(P2, P1);
+				E2 = Vecteur3f.sous(P3, P1);
 
-				PUV1 = new Vector2f(uv[indices[i + 0] * 2 + 0], uv[indices[i + 0] * 2 + 1]);
-				PUV2 = new Vector2f(uv[indices[i + 1] * 2 + 0], uv[indices[i + 1] * 2 + 1]);
-				PUV3 = new Vector2f(uv[indices[i + 2] * 2 + 0], uv[indices[i + 2] * 2 + 1]);
+				PUV1 = new Vecteur2f(uv[Indexes[i + 0] * 2 + 0], uv[Indexes[i + 0] * 2 + 1]);
+				PUV2 = new Vecteur2f(uv[Indexes[i + 1] * 2 + 0], uv[Indexes[i + 1] * 2 + 1]);
+				PUV3 = new Vecteur2f(uv[Indexes[i + 2] * 2 + 0], uv[Indexes[i + 2] * 2 + 1]);
 
-				dUV1 = Vector2f.sub(PUV2, PUV1);
-				dUV2 = Vector2f.sub(PUV3, PUV1);
+				dUV1 = Vecteur2f.sous(PUV2, PUV1);
+				dUV2 = Vecteur2f.sous(PUV3, PUV1);
 
 				a = 1.0f / ((dUV1.x * dUV2.y) - (dUV2.x * dUV1.y));
 
-				TAN = Vector3f.sub(Vector3f.scale(E1, dUV2.y), Vector3f.scale(E2, dUV1.y));
-				BITAN = Vector3f.sub(Vector3f.scale(E2, dUV1.x), Vector3f.scale(E1, dUV2.x));
-				TAN.scale(a);
-				TAN.normalize();
-				BITAN.scale(a);
-				BITAN.normalize();
+				TAN = Vecteur3f.sous(Vecteur3f.mult(E1, dUV2.y), Vecteur3f.mult(E2, dUV1.y));
+				BITAN = Vecteur3f.sous(Vecteur3f.mult(E2, dUV1.x), Vecteur3f.mult(E1, dUV2.x));
+				TAN.mult(a);
+				TAN.norm();
+				BITAN.mult(a);
+				BITAN.norm();
 
-				tan[indices[i + 0] * 3 + 0] = TAN.x;
-				tan[indices[i + 0] * 3 + 1] = TAN.y;
-				tan[indices[i + 0] * 3 + 2] = TAN.z;
-				bitan[indices[i + 0] * 3 + 0] = BITAN.x;
-				bitan[indices[i + 0] * 3 + 1] = BITAN.y;
-				bitan[indices[i + 0] * 3 + 2] = BITAN.z;
+				tan[Indexes[i + 0] * 3 + 0] = TAN.x;
+				tan[Indexes[i + 0] * 3 + 1] = TAN.y;
+				tan[Indexes[i + 0] * 3 + 2] = TAN.z;
+				bitan[Indexes[i + 0] * 3 + 0] = BITAN.x;
+				bitan[Indexes[i + 0] * 3 + 1] = BITAN.y;
+				bitan[Indexes[i + 0] * 3 + 2] = BITAN.z;
 
-				tan[indices[i + 1] * 3 + 0] = TAN.x;
-				tan[indices[i + 1] * 3 + 1] = TAN.y;
-				tan[indices[i + 1] * 3 + 2] = TAN.z;
-				bitan[indices[i + 1] * 3 + 0] = BITAN.x;
-				bitan[indices[i + 1] * 3 + 1] = BITAN.y;
-				bitan[indices[i + 1] * 3 + 2] = BITAN.z;
+				tan[Indexes[i + 1] * 3 + 0] = TAN.x;
+				tan[Indexes[i + 1] * 3 + 1] = TAN.y;
+				tan[Indexes[i + 1] * 3 + 2] = TAN.z;
+				bitan[Indexes[i + 1] * 3 + 0] = BITAN.x;
+				bitan[Indexes[i + 1] * 3 + 1] = BITAN.y;
+				bitan[Indexes[i + 1] * 3 + 2] = BITAN.z;
 
-				tan[indices[i + 2] * 3 + 0] = TAN.x;
-				tan[indices[i + 2] * 3 + 1] = TAN.y;
-				tan[indices[i + 2] * 3 + 2] = TAN.z;
-				bitan[indices[i + 2] * 3 + 0] = BITAN.x;
-				bitan[indices[i + 2] * 3 + 1] = BITAN.y;
-				bitan[indices[i + 2] * 3 + 2] = BITAN.z;
+				tan[Indexes[i + 2] * 3 + 0] = TAN.x;
+				tan[Indexes[i + 2] * 3 + 1] = TAN.y;
+				tan[Indexes[i + 2] * 3 + 2] = TAN.z;
+				bitan[Indexes[i + 2] * 3 + 0] = BITAN.x;
+				bitan[Indexes[i + 2] * 3 + 1] = BITAN.y;
+				bitan[Indexes[i + 2] * 3 + 2] = BITAN.z;
 			}
 		}
 
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInVAO(0,3, positions);
-		storeDataInVAO(1,2, uv);
-		storeDataInVAO(2,3,norm);
-		storeDataInVAO(3,3,tan);
-		storeDataInVAO(4,3,bitan);
+		int vaoID = créerVAO();
+		lierTamponIndexes(Indexes);
+		stockerDonnéesDansVAO(0,3, positions);
+		stockerDonnéesDansVAO(1,2, uv);
+		stockerDonnéesDansVAO(2,3,norm);
+		stockerDonnéesDansVAO(3,3,tan);
+		stockerDonnéesDansVAO(4,3,bitan);
 
-		unbindVAO();
+		délierVAO();
 
 		Log.w("LoadToVAO", (System.currentTimeMillis() - timer) +" milliseconds to create VAO");
 
-		return new RawModel(vaoID, indices.length, positions, uv, norm,indices);
+		return new ModèleBrut(vaoID, Indexes.length, positions, uv, norm,Indexes);
 	}
 
-	public static RawModel loadToVAO(float[] positions){
-		int vaoID = createVAO();
+	public static ModèleBrut ChargerVersVAO(float[] positions){
+		int vaoID = créerVAO();
 
-		storeDataInVAO(0,3,positions);
-		unbindVAO();
-		return new RawModel(vaoID,positions.length/3,positions,null,null,null);
+		stockerDonnéesDansVAO(0,3,positions);
+		délierVAO();
+		return new ModèleBrut(vaoID,positions.length/3,positions,null,null,null);
 	}
 
-	public static RawModel loadTextToVAO(float[] positions, float[] UV){
-		int vaoID = createVAO();
-		storeDataInVAO(0,2,positions);
-		storeDataInVAO(1,2,UV);
-		unbindVAO();
-		return new RawModel(vaoID,positions.length/2,UV,null,null,null);
+	public static ModèleBrut ChargerTexteVersVAO(float[] positions, float[] UV){
+		int vaoID = créerVAO();
+		stockerDonnéesDansVAO(0,2,positions);
+		stockerDonnéesDansVAO(1,2,UV);
+		délierVAO();
+		return new ModèleBrut(vaoID,positions.length/2,UV,null,null,null);
 	}
 
-	public String loadAssetText(String directory) {
+	public String ChargerTexteActif(String répertoire) {
 		long timer = System.currentTimeMillis();
 
 		String result;
 		try {
 			AssetManager assets = main.getAssets();
-			InputStream is = assets.open(directory);
+			InputStream is = assets.open(répertoire);
 			result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining(" \n"));
 		}catch (Exception e){
 			Log.e("File", "an error occurred: "+e.getMessage());
@@ -151,20 +151,20 @@ public class Loader {
 			result = "";
 		}
 
-		Log.w("LoadAssetText", (System.currentTimeMillis() - timer) +" milliseconds to load " + directory);
+		Log.w("LoadAssetText", (System.currentTimeMillis() - timer) +" milliseconds to load " + répertoire);
 
 		return result;
 	}
 
-	public RawModel loadAssetModel(String dir){
+	public ModèleBrut ChargerModèleActif(String rép){
 		long timerB = System.currentTimeMillis();
 
-		RawModel model = null;
+		ModèleBrut model = null;
 
 		InputStream is;
 		try {
 			AssetManager am = main.getAssets();
-			is = am.open(dir);
+			is = am.open(rép);
 		}catch (Exception e){
 			Log.e("loadAssetModel",e.getMessage());
 			is = null;
@@ -381,8 +381,8 @@ public class Loader {
 
 					//Log.w("loading", " : " + (rawPos.size() + rawNorm.size() + rawUV.size()));
 
-					model = new RawModel(pos, uv, norm, index);
-					model.name = dir;
+					model = new ModèleBrut(pos, uv, norm, index);
+					model.name = rép;
 				}else{
 					Log.e("index error", "GluEngine only supports up to " + Integer.MAX_VALUE);
 				}
@@ -395,21 +395,21 @@ public class Loader {
 
 		}
 
-		Log.w("load model", (System.currentTimeMillis() - timerB) + "ms to load " + dir);
+		Log.w("load model", (System.currentTimeMillis() - timerB) + "ms to load " + rép);
 
 		return model;
 	}
 
-	public RawModel[] loadMultipleAssetModels(String dir){
+	public ModèleBrut[] ChargerPlusieursModèlesActifs(String rép){
 		long timerA = System.currentTimeMillis();
 		long timerB = System.currentTimeMillis();
 
-		ArrayList<RawModel> rawModels = new ArrayList<>();
+		ArrayList<ModèleBrut> modèleBruts = new ArrayList<>();
 
 		InputStream is;
 		try {
 			AssetManager am = main.getAssets();
-			is = am.open(dir);
+			is = am.open(rép);
 		}catch (Exception e){
 			Log.e("loadMultipleAssetModels",e.getMessage());
 			is = null;
@@ -603,10 +603,10 @@ public class Loader {
 
 						//Log.w("loading", "sizes : " + (rawPos.size() + rawNorm.size() + rawUV.size()));
 
-						RawModel model = new RawModel(pos, uv, norm, index);
+						ModèleBrut model = new ModèleBrut(pos, uv, norm, index);
 						model.name = name;
 
-						rawModels.add(model);
+						modèleBruts.add(model);
 						Log.w("load model", (System.currentTimeMillis() - timerA) + "ms to load " + name);
 						timerA = System.currentTimeMillis();
 					}else{
@@ -634,12 +634,12 @@ public class Loader {
 			Log.w("too big models",tooBigNames.get(i));
 		}
 
-		Log.w("load model", (System.currentTimeMillis() - timerB) + "ms to load " + dir);
+		Log.w("load model", (System.currentTimeMillis() - timerB) + "ms to load " + rép);
 
 		//convert from ArrayList to array
-		RawModel[] models = new RawModel[rawModels.size()];
-		for (int i = 0; i < rawModels.size(); i ++) {
-			models[i] = rawModels.get(i);
+		ModèleBrut[] models = new ModèleBrut[modèleBruts.size()];
+		for (int i = 0; i < modèleBruts.size(); i ++) {
+			models[i] = modèleBruts.get(i);
 		}
 
 		return models;
@@ -647,9 +647,9 @@ public class Loader {
 
 	/* @SuppressWarnings("ConstantConditions")
 
-	public Scene loadScene(String directory, Vector2f resolution) {
+	public Scène loadScene(String directory, Vecteur2f resolution) {
 		long timer = System.currentTimeMillis();
-		Scene scene = new Scene();
+		Scène scene = new Scène();
 
 		try {
 			// load Ressources
@@ -809,7 +809,7 @@ public class Loader {
 								int MatType = 0;
 								boolean isColorTextured = false;
 								String textureName = null;
-								Vector3f color = new Vector3f(0f);
+								Vecteur3f color = new Vecteur3f(0f);
 								float eIntensity = 0f;
 								float roughness = 0f;
 								boolean isNormalMapped = false;
@@ -840,7 +840,7 @@ public class Loader {
 												col[i] = (float) jsonSceneReader.nextDouble();
 											}
 											jsonSceneReader.endArray();
-											color = new Vector3f(col[0], col[1], col[2]);
+											color = new Vecteur3f(col[0], col[1], col[2]);
 											break;
 										case "emissionIntensity":
 											eIntensity = (float) jsonSceneReader.nextDouble();
@@ -889,7 +889,7 @@ public class Loader {
 							jsonSceneReader.beginObject();
 
 							String textureName = null;
-							RawModel model = null;
+							ModèleBrut model = null;
 							float intensity = 0f;
 							while (jsonSceneReader.hasNext()) {
 								String tag = jsonSceneReader.nextName();
@@ -928,9 +928,9 @@ public class Loader {
 								String name = null;
 								String meshName = null;
 								boolean separateMesh = false;
-								Vector3f position = null;
-								Vector3f scale = null;
-								Vector3f rotation = null;
+								Vecteur3f position = null;
+								Vecteur3f scale = null;
+								Vecteur3f rotation = null;
 								String matName = null;
 
 								jsonSceneReader.beginObject();
@@ -949,7 +949,7 @@ public class Loader {
 											for (int i = 0; i < 3; i++) {
 												pos[i] = (float) jsonSceneReader.nextDouble();
 											}
-											position = new Vector3f(pos[0], pos[1], pos[2]);
+											position = new Vecteur3f(pos[0], pos[1], pos[2]);
 											jsonSceneReader.endArray();
 											break;
 										case "rotation":
@@ -958,7 +958,7 @@ public class Loader {
 											for (int i = 0; i < 3; i++) {
 												rot[i] = (float) jsonSceneReader.nextDouble();
 											}
-											rotation = new Vector3f(rot[0], rot[1], rot[2]);
+											rotation = new Vecteur3f(rot[0], rot[1], rot[2]);
 											jsonSceneReader.endArray();
 											break;
 										case "scale":
@@ -967,7 +967,7 @@ public class Loader {
 											for (int i = 0; i < 3; i++) {
 												s[i] = (float) jsonSceneReader.nextDouble();
 											}
-											scale = new Vector3f(s[0], s[1], s[2]);
+											scale = new Vecteur3f(s[0], s[1], s[2]);
 											jsonSceneReader.endArray();
 											break;
 										case "material":
@@ -990,7 +990,7 @@ public class Loader {
 									e.name = name;
 									scene.addEntity(e);
 								} else {
-									RawModel[] meshes = loadMultipleAssetModels(ressources.getMeshDir(meshName));
+									ModèleBrut[] meshes = loadMultipleAssetModels(ressources.getMeshDir(meshName));
 									for (int i = 0; i < meshes.length; i++) {
 										Entity e = new Entity(meshes[i]);
 										e.setPosition(position, 0);
@@ -1011,8 +1011,8 @@ public class Loader {
 						if (true) {
 							jsonSceneReader.beginArray();
 							while (jsonSceneReader.hasNext()) {
-								Vector3f pos = null;
-								Vector3f col = null;
+								Vecteur3f pos = null;
+								Vecteur3f col = null;
 								float intensity = 0f;
 
 								jsonSceneReader.beginObject();
@@ -1027,7 +1027,7 @@ public class Loader {
 											}
 											jsonSceneReader.endArray();
 
-											pos = new Vector3f(p[0], p[1], p[2]);
+											pos = new Vecteur3f(p[0], p[1], p[2]);
 											break;
 										case "color":
 											jsonSceneReader.beginArray();
@@ -1037,7 +1037,7 @@ public class Loader {
 											}
 											jsonSceneReader.endArray();
 
-											col = new Vector3f(c[0], c[1], c[2]);
+											col = new Vecteur3f(c[0], c[1], c[2]);
 											break;
 										case "intensity":
 											intensity = (float) jsonSceneReader.nextDouble();
@@ -1065,8 +1065,8 @@ public class Loader {
 										while (jsonSceneReader.hasNext()) {
 											String name = null;
 											String textureName = null;
-											Vector2f position = null;
-											Vector2f scale = null;
+											Vecteur2f position = null;
+											Vecteur2f scale = null;
 											float rotation = 0f;
 
 											jsonSceneReader.beginObject();
@@ -1086,7 +1086,7 @@ public class Loader {
 															pos[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														position = new Vector2f(pos[0], pos[1]);
+														position = new Vecteur2f(pos[0], pos[1]);
 														break;
 													case "rotation":
 														rotation = (float) jsonSceneReader.nextDouble();
@@ -1098,7 +1098,7 @@ public class Loader {
 															sc[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														scale = new Vector2f(sc[0], sc[1]);
+														scale = new Vecteur2f(sc[0], sc[1]);
 														break;
 													default:
 														jsonSceneReader.skipValue();
@@ -1124,9 +1124,9 @@ public class Loader {
 										jsonSceneReader.beginArray();
 										while (jsonSceneReader.hasNext()) {
 											String name = null;
-											Vector4f color = null;
-											Vector2f position = null;
-											Vector2f scale = null;
+											Vecteur4f color = null;
+											Vecteur2f position = null;
+											Vecteur2f scale = null;
 											float rotation = 0f;
 											float rayonCoin = 0f;
 
@@ -1143,7 +1143,7 @@ public class Loader {
 														for (int i = 0; i < 4; i++) {
 															c[i] = (float) jsonSceneReader.nextDouble();
 														}
-														color = new Vector4f(c[0], c[1], c[2], c[3]);
+														color = new Vecteur4f(c[0], c[1], c[2], c[3]);
 														jsonSceneReader.endArray();
 														break;
 													case "position":
@@ -1152,7 +1152,7 @@ public class Loader {
 														for (int i = 0; i < 2; i++) {
 															pos[i] = (float) jsonSceneReader.nextDouble();
 														}
-														position = new Vector2f(pos[0], pos[1]);
+														position = new Vecteur2f(pos[0], pos[1]);
 														jsonSceneReader.endArray();
 
 														break;
@@ -1165,7 +1165,7 @@ public class Loader {
 														for (int i = 0; i < 2; i++) {
 															sc[i] = (float) jsonSceneReader.nextDouble();
 														}
-														scale = new Vector2f(sc[0], sc[1]);
+														scale = new Vecteur2f(sc[0], sc[1]);
 														jsonSceneReader.endArray();
 														break;
 													case "rayonCoin" :
@@ -1199,10 +1199,10 @@ public class Loader {
 											String name = null;
 											String fontName = null;
 											String text = null;
-											Vector2f size = null;
-											Vector2f position = null;
+											Vecteur2f size = null;
+											Vecteur2f position = null;
 											float rotation = 0f;
-											Vector2f scale = null;
+											Vecteur2f scale = null;
 
 											while (jsonSceneReader.hasNext()){
 												String textTag = jsonSceneReader.nextName();
@@ -1223,7 +1223,7 @@ public class Loader {
 															s[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														size = new Vector2f(s[0],s[1]);
+														size = new Vecteur2f(s[0],s[1]);
 														break;
 													case "position" :
 														jsonSceneReader.beginArray();
@@ -1232,7 +1232,7 @@ public class Loader {
 															p[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														position = new Vector2f(p[0],p[1]);
+														position = new Vecteur2f(p[0],p[1]);
 														break;
 													case "rotation" :
 														rotation = (float) jsonSceneReader.nextDouble();
@@ -1244,7 +1244,7 @@ public class Loader {
 															sc[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														scale = new Vector2f(sc[0],sc[1]);
+														scale = new Vecteur2f(sc[0],sc[1]);
 														break;
 												}
 											}
@@ -1267,8 +1267,8 @@ public class Loader {
 											GUIBase bDéfaut = null;
 											GUIBase bPressé = null;
 											GUIBase bSurvol = null;
-											Vector2f taille = null;
-											Vector2f position = null;
+											Vecteur2f taille = null;
+											Vecteur2f position = null;
 											float rotation = 0f;
 											Bouton.Préréglages préréglage = null;
 
@@ -1310,7 +1310,7 @@ public class Loader {
 															s[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														taille = new Vector2f(s[0],s[1]);
+														taille = new Vecteur2f(s[0],s[1]);
 														break;
 													case "position" :
 														jsonSceneReader.beginArray();
@@ -1319,7 +1319,7 @@ public class Loader {
 															p[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														position = new Vector2f(p[0],p[1]);
+														position = new Vecteur2f(p[0],p[1]);
 														break;
 													case "rotation" :
 														rotation = (float) jsonSceneReader.nextDouble();
@@ -1483,7 +1483,7 @@ public class Loader {
 											String name = null;
 											GUIBase barre = null;
 											GUIBase bouton = null;
-											Vector2f position = null;
+											Vecteur2f position = null;
 											float rotation = 0f;
 											float valMax = 0f;
 											float valMin = 0f;
@@ -1513,7 +1513,7 @@ public class Loader {
 															p[i] = (float) jsonSceneReader.nextDouble();
 														}
 														jsonSceneReader.endArray();
-														position = new Vector2f(p[0],p[1]);
+														position = new Vecteur2f(p[0],p[1]);
 														break;
 													case "rotation" :
 														rotation = (float) jsonSceneReader.nextDouble();
@@ -1575,7 +1575,7 @@ public class Loader {
 		return scene;
 	} */
 
-	/* public void Batch(Scene scene){
+	/* public void Batch(Scène scene){
 		scene.CleanEntities = false;
 		Log.w("Batching","Starting Batching....");
 		ArrayList<Entity> entities;
@@ -1596,9 +1596,9 @@ public class Loader {
 					for (int j = 0; j < entities.get(i).instanceCount; j++) {
 						Log.w("Batching", "positions...");
 						for (int k = 0; k < entities.get(i).model.positions.length / 3; k++) {
-							Vector3f position = new Vector3f(entities.get(i).model.positions[3 * k + 0], entities.get(i).model.positions[3 * k + 1], entities.get(i).model.positions[3 * k + 2]);
-							Matrix4f transform = Maths.createTransformationMatrix(entities.get(i).getPosition(j), entities.get(i).getRotation(j), entities.get(i).getScale(j));
-							position = Matrix4f.MultiplyMV(transform, position);
+							Vecteur3f position = new Vecteur3f(entities.get(i).model.positions[3 * k + 0], entities.get(i).model.positions[3 * k + 1], entities.get(i).model.positions[3 * k + 2]);
+							Matrice4f transformée = Maths.createTransformationMatrix(entities.get(i).getPosition(j), entities.get(i).getRotation(j), entities.get(i).getScale(j));
+							position = Matrice4f.MultiplyMV(transformée, position);
 							positions.add(position.x);
 							positions.add(position.y);
 							positions.add(position.z);
@@ -1657,7 +1657,7 @@ public class Loader {
 			in[i] = indices.get(i);
 		}
 
-		RawModel model = loadToVAO(p,n,u,in);
+		ModèleBrut model = loadToVAO(p,n,u,in);
 
 		Entity sceneEntity = new Entity(model);
 		scene.Entities = Ce;
@@ -1668,23 +1668,23 @@ public class Loader {
 		scene.CleanEntities = true;
 	} */
 
-	public GTexture loadAssetTexture(String dirr){
+	public GTexture chargerTextureActif(String rép){
 		long timer = System.currentTimeMillis();
 
 		AssetManager assetManager = main.getAssets();
 		Bitmap bmp = null;
 		try {
-			InputStream is = assetManager.open(dirr);
+			InputStream is = assetManager.open(rép);
 			bmp = BitmapFactory.decodeStream(is);
 		}catch(Exception e){
-			Log.e("AssetTexture Loader","an error occurred");
-			Log.e("AssetTexture Loader",e.getMessage());
+			Log.e("AssetTexture Chargeur","an error occurred");
+			Log.e("AssetTexture Chargeur",e.getMessage());
 			e.printStackTrace();
 		}
 
 		GTexture gTexture  = new GTexture(bmp);
 
-		Log.w("load Asset Texture", (System.currentTimeMillis()-timer) + " milliseconds to load texture : " + dirr);
+		Log.w("load Asset Texture", (System.currentTimeMillis()-timer) + " milliseconds to load texture : " + rép);
 		return gTexture;
 	}
 
@@ -1759,43 +1759,43 @@ public class Loader {
 
 	//TODO implement a distance field system for better character rendering.
 
-	private static int createVAO(){
+	private static int créerVAO(){
 		int[] vaoID =new int[1];
 		GLES30.glGenVertexArrays(1,vaoID,0);
 		GLES30.glBindVertexArray(vaoID[0]);
 		return  vaoID[0];
 	}
 
-	private static void storeDataInVAO(int index, int dimensions, float[] data){
+	private static void stockerDonnéesDansVAO(int index, int dimensions, float[] data){
 		int[] vboID = new int[1];
 		GLES30.glGenBuffers(1,vboID,0);
 		GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vboID[0]);
-		FloatBuffer floatBuffer = makeFloatBuffer(data);
+		FloatBuffer floatBuffer = créerTamponFloat(data);
 		GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,data.length*4,floatBuffer,GLES30.GL_STATIC_DRAW);
 		GLES30.glVertexAttribPointer(index, dimensions, GLES30.GL_FLOAT, false, 0,0 );
 		GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
 	}
 
-	private static void bindIndicesBuffer(int[] indices){
+	private static void lierTamponIndexes(int[] indices){
 		int[] vboID = new int[1];
 		GLES30.glGenBuffers(1,vboID,0);
 		GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,vboID[0]);
-		IntBuffer intBuffer = makeIntBuffer(indices);
+		IntBuffer intBuffer = créerTamponInt(indices);
 		GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,indices.length*Integer.BYTES,intBuffer,GLES30.GL_STATIC_DRAW);
 	}
 
-	private static void unbindVAO(){
+	private static void délierVAO(){
 		GLES30.glBindVertexArray(0);
 	}
 
-	private static FloatBuffer makeFloatBuffer(float[] array){
+	private static FloatBuffer créerTamponFloat(float[] array){
 		FloatBuffer floatBuffer = ByteBuffer.allocateDirect(array.length*Float.BYTES).order(ByteOrder.nativeOrder()).asFloatBuffer();
 		floatBuffer.put(array).position(0);
 		//Log.w("makeFloatBuffer", array.length * 4 +" bytes buffer created");
 		return floatBuffer;
 	}
 
-	private static IntBuffer makeIntBuffer(int[] data){
+	private static IntBuffer créerTamponInt(int[] data){
 		IntBuffer buffer = ByteBuffer.allocateDirect(data.length*Integer.BYTES).order(ByteOrder.nativeOrder()).asIntBuffer();
 		buffer.put(data).position(0);
 		return buffer;
