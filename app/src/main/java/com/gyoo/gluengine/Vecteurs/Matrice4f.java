@@ -68,8 +68,6 @@ public class Matrice4f {
         return resMat;
     }
 
-
-
     public void rotation(Vecteur3f rotation){
         Matrice4f rot = new Matrice4f();
         Matrix.rotateM(rot.mat,0,rotation.x,1.0f,0.0f,0.0f);

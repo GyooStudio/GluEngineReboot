@@ -7,78 +7,79 @@ public class Transformée {
 
     private Vecteur3f position = new Vecteur3f(0f);
     private Vecteur3f rotation = new Vecteur3f(0f);
-    private Vecteur3f scale = new Vecteur3f(1f);
+    private Vecteur3f échelle = new Vecteur3f(1f);
 
     public Matrice4f positionM = new Matrice4f();
     public Matrice4f rotationM = new Matrice4f();
-    public Matrice4f scaleM = new Matrice4f();
+    public Matrice4f échelleM = new Matrice4f();
 
     public Transformée parent = null;
 
     public Transformée(){
         positionM.translation(position);
         rotationM.rotation(rotation);
-        scaleM.échelle(scale);
+        échelleM.échelle(échelle);
     }
 
-    public Matrice4f getTransformMatrix(){
+    public Matrice4f avoirMatriceTransformée(){
         if(parent == null) {
-            return Matrice4f.MultiplierMM(positionM, Matrice4f.MultiplierMM(scaleM, rotationM));
+            return Matrice4f.MultiplierMM(positionM, Matrice4f.MultiplierMM(échelleM, rotationM));
         }else{
-            return Matrice4f.MultiplierMM( parent.getTransformMatrix(), Matrice4f.MultiplierMM(positionM, Matrice4f.MultiplierMM(scaleM, rotationM) ) );
+            return Matrice4f.MultiplierMM( parent.avoirMatriceTransformée(), Matrice4f.MultiplierMM(positionM, Matrice4f.MultiplierMM(échelleM, rotationM) ) );
         }
     }
 
-    public void setPosition(Vecteur3f p){
+    /** Définir la position **/
+    public void positionner(Vecteur3f p){
         position = p.copier();
         positionM.faireIdentité();
         positionM.translation(p);
     }
-
-    public void translate(Vecteur3f t){
+    /** Ajouter à la position **/
+    public void déplacer(Vecteur3f t){
         position.addi(t);
         positionM.translation(t);
     }
-
-    public Vecteur3f getPosition(){
+    /** Obtenir la position **/
+    public Vecteur3f avoirPosition(){
         return position;
     }
-
-    public void rotate(Vecteur3f r){
+    /** Ajouter à la rotation **/
+    public void tourner(Vecteur3f r){
         rotation.addi(r);
         rotationM.rotation(r);
     }
-
-    public void setRotation(Vecteur3f r){
+    /** Définir la rotation **/
+    public void orienter(Vecteur3f r){
         rotation = r.copier();
         rotationM.faireIdentité();
         rotationM.rotation(r);
     }
-
-    public Vecteur3f getRotation(){
+    /** Obtenir la rotation **/
+    public Vecteur3f avoirRotation(){
         return rotation;
     }
-
-    public void setScale(Vecteur3f s){
-        scale = s;
-        scaleM.faireIdentité();
-        scaleM.échelle(s);
+    /** Ajouter à l'échelle **/
+    public void échelonner(Vecteur3f s){
+        échelle = s;
+        échelleM.faireIdentité();
+        échelleM.échelle(s);
+    }
+    /** Définir l'échelle **/
+    public void échelle(Vecteur3f s){
+        échelle.addi(s);
+        échelleM.échelle(s);
+    }
+    /** Obtenir l'échelle **/
+    public Vecteur3f avoirÉchelle(){
+        return échelle;
     }
 
-    public void scale(Vecteur3f s){
-        scale.addi(s);
-        scaleM.échelle(s);
-    }
-
-    public Vecteur3f getScale(){
-        return scale;
-    }
-
-    public void parent(Transformée p){
+    public void donnerParent(Transformée p){
         parent = p;
     }
 
-    public void unParent(){
+    public void retirerParent(){
         parent = null;
     }
 }

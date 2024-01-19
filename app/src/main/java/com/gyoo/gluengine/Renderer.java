@@ -40,11 +40,17 @@ public class Renderer implements GLSurfaceView.Renderer {
         quad = new IUGQuad();
 
         quadTrans = quad.transformée2D;
-        quadTrans.setPosition(new Vecteur3f(600f,0,-0.5f) );
-        quadTrans.setScalePt(new Vecteur2f(1f));
+        quadTrans.positionner(new Vecteur3f(600f,0,-0.5f) );
+        quadTrans.échellePt(new Vecteur2f(1f));
         //quad.addTexture(texture);
 
         scène.ajouterGUIQuad(quad);
+
+        GluObjet o = new GluObjet(chargeur.ChargerModèleActif("Objets/ico.obj"));
+
+        for (int i = 0; i < 100; i++) {
+            scène.ajouterGluObject(o);
+        }
 
         projection = new Matrice4f();
         Matrix.perspectiveM(projection.mat,0,70f,1f,0.001f,100f);
@@ -83,35 +89,47 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private void peindre(Scène scène){
-        for (GluObjet object : scène.gluObjets){
-            object.shader.commencer();
+        for (GluObjet objet : scène.gluObjets) {
+            objet.colo.commencer();
+
+            GLES30.glBindVertexArray(objet.modèle.vaoID);
+            GLES30.glEnableVertexAttribArray(0);
+
+            objet.colo.chargerMatriceProjection(projection);
+
+            GLES30.glDrawElements(GLES30.GL_TRIANGLES,objet.modèle.nbPoint,GLES30.GL_UNSIGNED_INT,0);
+
+            GLES30.glDisableVertexAttribArray(0);
+            GLES30.glBindVertexArray(0);
+
+            objet.colo.terminer();
         }
 
         for (IUGQuad quad : scène.IUGQuads) {
-            quad.shader.commencer();
+            quad.colo.commencer();
 
-            GLES30.glBindVertexArray(quad.mesh.vaoID);
+            GLES30.glBindVertexArray(quad.modèle.vaoID);
             GLES30.glEnableVertexAttribArray(0);
 
             if(quad.texture != null){
                 GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
                 GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, quad.texture.ID);
-                quad.shader.aTexture(true);
+                quad.colo.aTexture(true);
             }else{
-                quad.shader.aTexture(false);
+                quad.colo.aTexture(false);
             }
 
-            quad.shader.chargerDimÉcran(ressources.dimÉcranPixels);
+            quad.colo.chargerDimÉcran(ressources.dimÉcranPixels);
 
-            quad.shader.chargerCouleur(quad.shader.color);
-            quad.shader.chargerTransformée(quad.transformée2D.getTransformMatrix());
+            quad.colo.chargerCouleur(quad.colo.color);
+            quad.colo.chargerTransformée(quad.transformée2D.avoirMatriceTransformée());
 
-            GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP,0,quad.mesh.vertCount);
+            GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP,0,quad.modèle.nbPoint);
 
             GLES30.glDisableVertexAttribArray(0);
             GLES30.glBindVertexArray(0);
 
-            quad.shader.terminer();
+            quad.colo.terminer();
         }
     }
 }

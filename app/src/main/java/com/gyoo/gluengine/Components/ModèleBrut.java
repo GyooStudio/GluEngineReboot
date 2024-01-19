@@ -4,7 +4,7 @@ import com.gyoo.gluengine.utils.Chargeur;
 
 public class ModèleBrut {
     public int vaoID;
-    public int vertCount;
+    public int nbPoint;
     public String name = "name";
     public boolean isDirty = true;
 
@@ -13,9 +13,9 @@ public class ModèleBrut {
     public float[] norm;
     public int[] indices;
 
-    public ModèleBrut(int vaoID, int vertCount, float[] positions, float[] uv, float[] norm, int[] indices){
+    public ModèleBrut(int vaoID, int nbPoint, float[] positions, float[] uv, float[] norm, int[] indices){
         this.vaoID = vaoID;
-        this.vertCount = vertCount;
+        this.nbPoint = nbPoint;
         isDirty = false;
         this.positions = positions;
         this.uv = uv;
@@ -28,7 +28,7 @@ public class ModèleBrut {
         this.uv = uv.clone();
         this.norm = norm.clone();
         this.indices = indices.clone();
-        vertCount = indices.length;
+        nbPoint = indices.length;
         vaoID = 0;
         isDirty = true;
     }

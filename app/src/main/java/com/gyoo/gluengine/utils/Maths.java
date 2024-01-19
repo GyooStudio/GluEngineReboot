@@ -81,19 +81,8 @@ public class Maths {
     }
 
     public static Vecteur2f pointLePlusPrèsSurLaLigne(Vecteur2f ptUn, Vecteur2f ptDeux, Vecteur2f ptTest){
-        float m;
-        if(ptUn.x-ptDeux.x != 0) {
-            m = (ptUn.y - ptDeux.y) / (ptUn.x - ptDeux.x);
-        }else{
-            m = 0;
-        }
-        float b = ptUn.y - (m*ptUn.x);
-
-        float _b = ptTest.y-(ptTest.x*(-1/m));
-
-        float f = Math.min(Math.max(ptUn.x,ptDeux.x),Math.max(Math.min(ptUn.x,ptDeux.x),(_b-b)/(((m*m)+1)/m)));
-
-        return new Vecteur2f(f, f*m+b);
+        Vecteur2f AB = Vecteur2f.sous(ptUn,ptDeux);
+        return Vecteur2f.addi(ptUn, Vecteur2f.mult( Vecteur2f.norm(AB), Vecteur2f.scal( AB, Vecteur2f.sous(ptUn,ptTest) ) / AB.longueur() )); // OD = OA + norm(AB)scal(AB, AC)/long(AB)
     }
 
     public static float mix(float a, float b, float m){

@@ -40,8 +40,8 @@ public class Vecteur2f {
     }
 
     public void norm(){
-        x = x/length();
-        y = y/length();
+        x = x/ longueur();
+        y = y/ longueur();
     }
 
     public static Vecteur2f addi(Vecteur2f a, Vecteur2f b){
@@ -64,7 +64,7 @@ public class Vecteur2f {
         return new Vecteur2f(a.x/b.x,a.y/b.y);
     }
 
-    public float length(){
+    public float longueur(){
         return (float) Math.sqrt(Math.pow(x,2.0)+Math.pow(y,2.0));
     }
 
@@ -72,12 +72,12 @@ public class Vecteur2f {
         return (float) Math.sqrt(Math.pow(a.x-b.x,2.0)+Math.pow(a.y-b.y,2.0));
     }
 
-    public static float Scal(Vecteur2f a, Vecteur2f b){
+    public static float scal(Vecteur2f a, Vecteur2f b){
         return (a.x*b.x)+(a.y*b.y);
     }
 
     public static Vecteur2f norm(Vecteur2f a){
-        return new Vecteur2f(a.x/a.length(),a.y/a.length());
+        return new Vecteur2f(a.x/a.longueur(),a.y/a.longueur());
     }
 
     public Vecteur2f copier(){

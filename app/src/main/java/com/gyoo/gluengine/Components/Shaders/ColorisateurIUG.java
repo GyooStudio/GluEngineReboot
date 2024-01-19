@@ -16,7 +16,7 @@ public class ColorisateurIUG extends ProgramColorisateur {
     public Vecteur4f color = new Vecteur4f(1f);
 
     public ColorisateurIUG() {
-        super(Chargeur.avoirChargeur().ChargerTexteActif("Shaders/IUG.vert"), Chargeur.avoirChargeur().ChargerTexteActif("Shaders/IUG.frag"));
+        super(Chargeur.avoirChargeur().ChargerTexteActif("Colorisateurs/IUG.vert"), Chargeur.avoirChargeur().ChargerTexteActif("Colorisateurs/IUG.frag"));
     }
 
     @Override

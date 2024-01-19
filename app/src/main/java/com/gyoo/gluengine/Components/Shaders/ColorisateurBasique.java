@@ -8,7 +8,7 @@ public class ColorisateurBasique extends ProgramColorisateur {
     private int PROJECTION;
 
     public ColorisateurBasique() {
-        super(Chargeur.avoirChargeur().ChargerTexteActif("Shaders/ColorisateurBasique.vert"), Chargeur.avoirChargeur().ChargerTexteActif("Shaders/ColorisateurBasique.frag"));
+        super(Chargeur.avoirChargeur().ChargerTexteActif("Colorisateurs/ColorisateurBasique.vert"), Chargeur.avoirChargeur().ChargerTexteActif("Colorisateurs/ColorisateurBasique.frag"));
     }
     @Override
     public void lierAttributs() {

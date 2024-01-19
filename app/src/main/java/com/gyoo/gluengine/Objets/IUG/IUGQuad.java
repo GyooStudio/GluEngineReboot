@@ -8,8 +8,8 @@ import com.gyoo.gluengine.Vecteurs.Vecteur4f;
 import com.gyoo.gluengine.utils.Chargeur;
 
 public class IUGQuad {
-    public ModèleBrut mesh;
-    public ColorisateurIUG shader;
+    public ModèleBrut modèle;
+    public ColorisateurIUG colo;
     public Transformée2D transformée2D;
     public GTexture texture;
     public IUGQuad parent;
@@ -23,24 +23,24 @@ public class IUGQuad {
 
     public IUGQuad(){
         Chargeur chargeur = Chargeur.avoirChargeur();
-        mesh = Chargeur.ChargerVersVAO(positions);
-        shader = new ColorisateurIUG();
-        shader.chargerCouleur(new Vecteur4f(0.0f,0.0f,1.0f,1.0f));
-        shader.buildShader();
+        modèle = Chargeur.ChargerVersVAO(positions);
+        colo = new ColorisateurIUG();
+        colo.chargerCouleur(new Vecteur4f(0.0f,0.0f,1.0f,1.0f));
+        colo.buildShader();
         transformée2D = new Transformée2D();
     }
 
-    public void addTexture(GTexture t){
+    public void ajouterTexture(GTexture t){
         texture = t;
     }
 
-    public void parent(IUGQuad p){
+    public void donnerParent(IUGQuad p){
         parent = p;
-        transformée2D.parent(p.transformée2D);
+        transformée2D.donnerParent(p.transformée2D);
     }
 
-    public void unParent(){
+    public void retirerParent(){
         parent = null;
-        transformée2D.unParent();
+        transformée2D.retirerParent();
     }
 }

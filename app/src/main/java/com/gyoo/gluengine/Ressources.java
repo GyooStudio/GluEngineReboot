@@ -20,6 +20,7 @@ public class Ressources {
         return ressources;
     }
 
+    // 1 point = 16mm ou 1 bouton de taille moyenne.
     public float PtÀPx(float Pt){return Pt / ( (16f/25.4f) * densitéPixel);}
     public Vecteur2f PtÀPx(Vecteur2f Pt){return Vecteur2f.mult(Pt, 1f/( (16f/25.4f) * densitéPixel));}
     public Vecteur3f PtÀPx(Vecteur3f Pt){return Vecteur3f.mult(Pt, 1f/( (16f/25.4f) * densitéPixel));}
