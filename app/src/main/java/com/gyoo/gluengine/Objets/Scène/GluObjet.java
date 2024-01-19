@@ -21,8 +21,8 @@ public class GluObjet {
         transformée = copier.transformée;
     }
 
-    public GluObjet copier(){
+    /*public GluObjet copier(){
         GluObjet r = new GluObjet(this.modèle);
-        r.colo = colo.cop
-    }
+        //r.colo = colo.cop
+    }*/
 }
