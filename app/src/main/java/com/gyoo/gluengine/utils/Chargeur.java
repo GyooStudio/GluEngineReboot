@@ -3,8 +3,12 @@ package com.gyoo.gluengine.utils;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.opengl.GLES30;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.gyoo.gluengine.Components.ModèleBrut;
 import com.gyoo.gluengine.MainActivity;
@@ -14,13 +18,16 @@ import com.gyoo.gluengine.Vecteurs.Vecteur3f;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,8 +118,8 @@ public class Chargeur {
 		stockerDonnéesDansVAO(0,3, positions);
 		stockerDonnéesDansVAO(1,2, uv);
 		stockerDonnéesDansVAO(2,3,norm);
-		stockerDonnéesDansVAO(3,3,tan);
-		stockerDonnéesDansVAO(4,3,bitan);
+		//stockerDonnéesDansVAO(3,3,tan);
+		//stockerDonnéesDansVAO(4,3,bitan);
 
 		délierVAO();
 
@@ -1677,8 +1684,8 @@ public class Chargeur {
 			InputStream is = assetManager.open(rép);
 			bmp = BitmapFactory.decodeStream(is);
 		}catch(Exception e){
-			Log.e("AssetTexture Chargeur","an error occurred");
-			Log.e("AssetTexture Chargeur",e.getMessage());
+			Log.e("TextureActif Chargeur","il y a eu une erreur.");
+			Log.e("TextureActif Chargeur",e.getMessage());
 			e.printStackTrace();
 		}
 

@@ -33,14 +33,10 @@ public class ModèleBrut {
         isDirty = true;
     }
 
-    public void makeModel(){
+    public void construire(){
         ModèleBrut model = Chargeur.ChargerVersVAO(positions,uv,norm,indices);
         vaoID = model.vaoID;
         isDirty = false;
-        //this.positions = null;
-        //this.uv = null;
-        //this.norm = null;
-        //this.indices = null;
     }
 
 }

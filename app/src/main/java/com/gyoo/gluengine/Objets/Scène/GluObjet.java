@@ -11,18 +11,19 @@ public class GluObjet {
 
     public GluObjet(ModèleBrut modèle){
         this.modèle = modèle;
+        this.modèle.construire();
         colo = new ColorisateurBasique();
+        colo.construire();
         transformée = new Transformée();
     }
 
     public GluObjet(GluObjet copier){
         modèle = copier.modèle;
         colo = copier.colo;
-        transformée = copier.transformée;
+        transformée = copier.transformée.copier();
     }
 
-    /*public GluObjet copier(){
-        GluObjet r = new GluObjet(this.modèle);
-        //r.colo = colo.cop
-    }*/
+    public GluObjet copier(){
+        return new GluObjet(this);
+    }
 }

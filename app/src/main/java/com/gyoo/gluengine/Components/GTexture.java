@@ -1,13 +1,18 @@
 package com.gyoo.gluengine.Components;
 
 import android.graphics.Bitmap;
+import android.opengl.ETC1;
+import android.opengl.ETC1Util;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 public class GTexture{
 
@@ -89,7 +94,7 @@ public class GTexture{
         isDirty =false;
     }
 
-    public void makeTexture(){
+    public void construire(){
         if(!bmp.isRecycled()) {
             int[] tex = new int[1];
             GLES30.glGenTextures(1, tex, 0);

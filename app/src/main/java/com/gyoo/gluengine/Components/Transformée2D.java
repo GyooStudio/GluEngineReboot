@@ -22,6 +22,16 @@ public class Transformée2D {
         rotationM.rotation(new Vecteur3f(0f,0f,rotation));
         échelleM.échelle(new Vecteur3f(échelle.x, échelle.y,1f));
     }
+    public Transformée2D(Transformée2D c){
+        position = c.position.copier();
+        rotation = c.rotation;
+        échelle = c.échelle.copier();
+
+        positionM = c.positionM.copier();
+        rotationM = c.rotationM.copier();
+        échelleM = c.échelleM.copier();
+        parent = c.parent;
+    }
 
     public Matrice4f avoirMatriceTransformée(){
         if(parent == null) {
@@ -112,5 +122,9 @@ public class Transformée2D {
 
     public  void retirerParent(){
         parent = null;
+    }
+
+    public Transformée2D copier(){
+        return new Transformée2D(this);
     }
 }

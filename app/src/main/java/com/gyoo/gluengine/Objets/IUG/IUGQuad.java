@@ -25,8 +25,8 @@ public class IUGQuad {
         Chargeur chargeur = Chargeur.avoirChargeur();
         modèle = Chargeur.ChargerVersVAO(positions);
         colo = new ColorisateurIUG();
+        colo.construire();
         colo.chargerCouleur(new Vecteur4f(0.0f,0.0f,1.0f,1.0f));
-        colo.buildShader();
         transformée2D = new Transformée2D();
     }
 

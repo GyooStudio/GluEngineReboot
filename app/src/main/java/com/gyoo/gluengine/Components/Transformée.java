@@ -20,6 +20,15 @@ public class Transformée {
         rotationM.rotation(rotation);
         échelleM.échelle(échelle);
     }
+    public Transformée(Transformée c){
+        position = c.position.copier();
+        rotation = c.rotation.copier();
+        échelle = c.échelle.copier();
+        positionM = c.positionM.copier();
+        rotationM = c.rotationM.copier();
+        échelleM = c.échelleM.copier();
+        parent = c.parent;
+    }
 
     public Matrice4f avoirMatriceTransformée(){
         if(parent == null) {
@@ -81,5 +90,9 @@ public class Transformée {
 
     public void retirerParent(){
         parent = null;
+    }
+
+    public Transformée copier(){
+        return new Transformée(this);
     }
 }

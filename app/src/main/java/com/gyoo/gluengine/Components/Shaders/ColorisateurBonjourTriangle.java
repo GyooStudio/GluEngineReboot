@@ -16,7 +16,7 @@ public class ColorisateurBonjourTriangle extends ProgramColorisateur {
     }
 
     @Override
-    public void avoirToutUniforme() {
+    public void lierToutUniforme() {
         TRANS = super.avoirPositionUniforme("Transformée");
     }
 

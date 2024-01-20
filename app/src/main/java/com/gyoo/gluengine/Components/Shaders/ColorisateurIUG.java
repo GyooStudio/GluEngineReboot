@@ -1,5 +1,7 @@
 package com.gyoo.gluengine.Components.Shaders;
 
+import android.util.Log;
+
 import com.gyoo.gluengine.Vecteurs.Matrice4f;
 import com.gyoo.gluengine.Vecteurs.Vecteur2f;
 import com.gyoo.gluengine.Vecteurs.Vecteur4f;
@@ -25,8 +27,8 @@ public class ColorisateurIUG extends ProgramColorisateur {
     }
 
     @Override
-    public void avoirToutUniforme() {
-        TRANSFORMÉE = super.avoirPositionUniforme("Transformée");
+    public void lierToutUniforme() {
+        TRANSFORMÉE = super.avoirPositionUniforme("Transformee");
         DIM_ÉCRAN = super.avoirPositionUniforme("screen");
         COULEUR = super.avoirPositionUniforme("color");
         A_TEXTURE = super.avoirPositionUniforme("isTextured");

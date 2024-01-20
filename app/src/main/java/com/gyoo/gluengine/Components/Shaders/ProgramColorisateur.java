@@ -24,7 +24,7 @@ public abstract class ProgramColorisateur {
             this.codeFrag = codeFrag;
         }
 
-        public void buildShader(){
+        public void construire(){
             colorisateurPoint = chargerColorisateur(GLES30.GL_VERTEX_SHADER, codePoint);
             colorisateurFragment = chargerColorisateur(GLES30.GL_FRAGMENT_SHADER, codeFrag);
             IDPrograme = GLES30.glCreateProgram();
@@ -44,7 +44,7 @@ public abstract class ProgramColorisateur {
 
             commencer();
             lierAttributs();
-            avoirToutUniforme();
+            lierToutUniforme();
             terminer();
 
             colorisateurConstruit = true;
@@ -87,7 +87,7 @@ public abstract class ProgramColorisateur {
             return shader;
         }
 
-        public abstract void avoirToutUniforme();
+        public abstract void lierToutUniforme();
 
         public int avoirPositionUniforme(String uniforme){
             return GLES30.glGetUniformLocation(IDPrograme,uniforme);
@@ -134,6 +134,7 @@ public abstract class ProgramColorisateur {
         }
 
         public void terminer(){
-            GLES30.glUseProgram(0);
+            //TODO à la compilation, retirer cette ligne.
+            //GLES30.glUseProgram(0);
         }
 }
